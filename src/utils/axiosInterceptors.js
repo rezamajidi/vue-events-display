@@ -17,23 +17,13 @@ const instance = axios.create({
 
 instance.interceptors.response.use(
     response => {
-        switch (response.status) {
-            case 400:
-                router.push("/login");
-                return;
-            case 401:
-                router.push("/login");
-                return;
-            case 404:
-                router.push("/404");
-                return;
-            default:
-                return response.data; // Return the data returned in the response, so that the request is received normally (release, let the response pass through the interceptor)
+        if (response.status === 200) {
+            return response.data; // Return the data returned in the response, so that the request is received normally (release, let the response pass through the interceptor)
         }
     },
-       error => {//When the response is wrong
-            router.push("/login");
-            return Promise.reject(error);
+    error => {
+        router.push("/404");
+        return Promise.reject(error);
     }
 );
 

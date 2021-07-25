@@ -49,12 +49,14 @@ const event = {
         }
     },
     actions: {
-        async fetchEvents({commit, state}) {
+        async fetchEvents({commit, state}, params) {
             commit(types.SET_EVENTS_LOADING, true)
             await axios.get("events",{ 
                 params:{ 
-                    limit: state.limit,
-                    offset: state.offset
+                    limit: params?.limit ?? state.limit,
+                    offset: params?.offset ?? state.offset,
+                    startsAt: params?.startsAt ,
+                    endsAt: params?.endsAt
                 }
                 }).then(result => {
                     commit(types.SET_EVENTS, result.items)
@@ -79,11 +81,12 @@ const event = {
                 console.log(e)
             })
         },
-        async fetchEventById({commit}, eventId) {
+        async fetchEventById({ commit }, eventId) {
             await commit(types.RESET_EVENT,)
             await axios.get(`events/${eventId}`).then(result => {
-                    commit(types.SET_EVENT, result)
+                commit(types.SET_EVENT, result)
                 }).catch((e) => {
+                    this.$router.redirect('/404')
                     console.log(e)
                 })
         },
